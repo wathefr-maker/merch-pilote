@@ -222,7 +222,7 @@ async function runOne(row){const id=row.dataset.id;const st=row.querySelector("[
  btn.disabled=false;}
 $("#sendsel").onclick=async()=>{const rows=[...document.querySelectorAll('#colrows .colrow')].filter(r=>r.querySelector('input').checked);
  if(!rows.length||!confirm("Appliquer la grille à "+rows.length+" collection(s) ? (réversible par collection)"))return;
- $("#sendsel").disabled=true;for(const r of rows){await runOne(r);}$("#sendsel").disabled=false;};
+ $("#sendsel").disabled=true;for(const r of rows){await runOne(r);await new Promise(z=>setTimeout(z,800));}$("#sendsel").disabled=false;};
 
 if(KEY)loadColls();
 </script></body></html>
