@@ -1,57 +1,228 @@
 <!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Merch Pilote</title><style>
-:root{--bg:#eef0f3;--surface:#fff;--surface2:#f6f7f9;--ink:#15181e;--muted:#5c6470;--line:#e2e5ea;--accent:#f0481d;--up:#1a8f52;--hid:#b06a12;--mono:ui-monospace,Menlo,monospace}
-@media(prefers-color-scheme:dark){:root{--bg:#121419;--surface:#1b1e25;--surface2:#22262f;--ink:#eceef1;--muted:#9aa3b0;--line:#2b2f39;--accent:#ff5b34;--up:#44c17f;--hid:#d99b3f}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif}
-.wrap{max-width:900px;margin:0 auto;padding:24px 16px 120px}
-h1{font-size:24px;margin:0 0 2px}.sub{color:var(--muted);margin-bottom:20px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
-select,input{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 12px;width:100%;font:inherit}
-label{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;display:block;margin-bottom:6px}
-.row{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-bottom:6px}
-.rk{font-family:var(--mono);color:var(--muted);text-align:center;font-size:13px}
-.nm{font-size:13px;font-weight:600}.meta{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:2px}
-.sc{font-family:var(--mono);font-weight:600}
-.vichy{color:var(--up);font-weight:700}.ds{color:var(--hid);font-weight:600}
-.btn{background:var(--accent);color:#fff;border:0;border-radius:11px;padding:12px 20px;font-weight:700;cursor:pointer;font:inherit}
-.btn.ghost{background:none;color:var(--muted);border:1px solid var(--line)}
-.btn:disabled{opacity:.5;cursor:default}
-.bar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:14px 16px;display:flex;gap:10px;justify-content:space-between;align-items:center}
-.stat{font-family:var(--mono);font-size:13px;color:var(--muted)}
-.msg{font-size:13px;color:var(--muted);margin-top:10px}.err{color:#c0392b}
+<title>Merch Pilote</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{--bg:#eef0f3;--surface:#fff;--surface2:#f6f7f9;--ink:#15181e;--muted:#5c6470;--faint:#9aa2ae;--line:#e2e5ea;--accent:#f0481d;--up:#1a8f52;--down:#9aa2ae;--hid:#b06a12;--hidbg:#f8eedd;
+--font:"Archivo",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace}
+@media(prefers-color-scheme:dark){:root{--bg:#121419;--surface:#1b1e25;--surface2:#22262f;--ink:#eceef1;--muted:#9aa3b0;--faint:#6b7280;--line:#2b2f39;--accent:#ff5b34;--up:#44c17f;--down:#6b7280;--hid:#d99b3f;--hidbg:#2e2616}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--font)}
+.wrap{max-width:1120px;margin:0 auto;padding:22px 16px 130px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+h1{font-size:24px;margin:0}.sub{color:var(--muted);font-size:14px;margin-top:2px}
+.eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);font-weight:600}
+header{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:flex-end;margin-bottom:14px}
+.nav{display:flex;gap:18px;margin-bottom:18px;border-bottom:1px solid var(--line)}
+.nav button{font:600 14px var(--font);color:var(--muted);background:none;border:0;border-bottom:2px solid transparent;padding:10px 2px;cursor:pointer}
+.nav button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:600;display:block;margin-bottom:6px}
+select,input[type=password]{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 12px;width:100%;font:inherit}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+.kpi .v{font:600 24px var(--mono)}.kpi .l{font-size:11px;color:var(--muted);margin-top:4px}
+.kpi.up .v{color:var(--up)}.kpi.hid .v{color:var(--hid)}
+.crit{display:grid;grid-template-columns:1.3fr 2fr 48px;gap:14px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.crit:first-of-type{border-top:0}.crit .nm{font-weight:600;font-size:14px}
+.crit .scale{font:11px var(--mono);color:var(--muted);margin-top:2px}
+.crit input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
+.crit .w{font:600 15px var(--mono);text-align:right}.crit.off{opacity:.5}
+.badge{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--hidbg);color:var(--hid);margin-left:6px}
+.rules{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);font-size:12.5px;color:var(--muted)}.rules b{color:var(--ink)}
+.gridfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.reset{font:600 12.5px var(--font);color:var(--muted);background:none;border:1px solid var(--line);border-radius:8px;padding:6px 11px;cursor:pointer}
+.reset:hover{color:var(--ink)}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+.col-h{display:flex;align-items:baseline;gap:8px;margin-bottom:10px;flex-wrap:wrap}.col-h h3{font-size:14px;margin:0}.col-h .tag{font-size:11px;color:var(--faint)}
+.list{display:flex;flex-direction:column;gap:6px;max-height:560px;overflow-y:auto;padding-right:4px}
+.rowi{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0}
+.rk{font:600 13px var(--mono);color:var(--faint);text-align:center}.mid{min-width:0}
+.nmt{font-size:12.5px;font-weight:600;line-height:1.25;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.meta{font:10.5px var(--mono);color:var(--muted);margin-top:3px}
+.hot{color:var(--accent);font-weight:600}.vichy{color:var(--up);font-weight:700}.ds{color:var(--hid);font-weight:600}.new{color:var(--up);font-weight:600}
+.right{display:flex;align-items:center;gap:8px}.score{font:600 14px var(--mono);min-width:24px;text-align:right}
+.scorebar{height:4px;border-radius:2px;background:var(--line);margin-top:4px;overflow:hidden}.scorebar i{display:block;height:100%;background:var(--accent)}
+.mv{font:600 11px var(--mono);width:38px;text-align:right}.mv.u{color:var(--up)}.mv.d{color:var(--down)}.mv.z{color:var(--faint)}
+.after .rowi{background:var(--surface);cursor:grab}.after .rowi.top{box-shadow:inset 3px 0 0 var(--accent);border-color:var(--accent)}.after .rowi.dragging{opacity:.4}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:13px 16px;z-index:20}
+.bar .in{max-width:1120px;margin:0 auto;display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:11px;padding:12px 20px;font:700 15px var(--font);cursor:pointer}
+.btn:disabled{opacity:.45;cursor:default}.btn.ghost{background:none;color:var(--muted);border:1px solid var(--line)}
+.stat{font:13px var(--mono);color:var(--muted)}.msg{font-size:13px;color:var(--muted);margin-top:10px}.err{color:#c0392b}
+.colrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 14px;margin-bottom:7px}
+.colrow input[type=checkbox]{width:17px;height:17px;accent-color:var(--accent);cursor:pointer;flex:none}
+.colrow .main{flex:1;min-width:150px}.colrow .cm{font:11px var(--mono);color:var(--muted);margin-top:2px}
+.colrow .st2{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.colrow .mini{font:600 12.5px var(--font);color:var(--accent);background:none;border:1px solid var(--line);border-radius:8px;padding:6px 11px;cursor:pointer}
+.colrow .mini:disabled{opacity:.4;cursor:default}
+@media(max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}.compare{grid-template-columns:1fr}.crit{grid-template-columns:1fr 54px;grid-template-areas:"nm w" "sl sl"}.crit .nm{grid-area:nm}.crit .w{grid-area:w}.crit .slwrap{grid-area:sl}}
 </style></head><body><div class="wrap">
-<h1>Merch Pilote</h1><div class="sub">Réordonne tes collections Shopify selon la grille de notation.</div>
-<div class="card"><label>Clé d'accès</label><input id="key" type="password" placeholder="colle ta clé ici"><div class="msg">Stockée uniquement dans ce navigateur.</div></div>
-<div class="card"><label>Collection</label><select id="coll"><option>— entre ta clé pour charger —</option></select>
-<div style="margin-top:10px"><button class="btn" id="go">Calculer l'ordre</button></div><div class="msg" id="st"></div></div>
-<div id="result" style="display:none"><div class="card"><div class="stat" id="kpis"></div></div>
-<div class="card"><div id="list"></div></div></div>
-<div class="bar"><span class="stat" id="barstat"></span><span style="display:flex;gap:10px">
-<button class="btn ghost" id="revert">Revert</button><button class="btn" id="apply" disabled>Renvoyer vers Shopify</button></span></div>
-</div><script>
+<header><div><div class="eyebrow">Merchandising</div><h1>Merch Pilote</h1><div class="sub">Réordonne tes collections Shopify selon la grille de notation.</div></div></header>
+
+<div class="card" id="authcard"><label>Clé d'accès</label><input id="key" type="password" placeholder="colle ta clé ici"><div class="msg">Mémorisée dans ce navigateur uniquement.</div></div>
+
+<nav class="nav"><button data-v="one" aria-selected="true">Collection</button><button data-v="all" aria-selected="false">Toutes les collections</button></nav>
+
+<section id="v-one">
+  <div class="card"><label>Collection</label><select id="coll"><option>— entre ta clé —</option></select>
+  <div style="margin-top:10px"><button class="btn" id="go">Calculer l'ordre</button></div><div class="msg" id="st"></div></div>
+
+  <div id="res" hidden>
+    <div class="kpis">
+      <div class="kpi"><div class="v" id="k-on">0</div><div class="l">en ligne</div></div>
+      <div class="kpi hid"><div class="v" id="k-vi">0</div><div class="l">en boutique Vichy</div></div>
+      <div class="kpi up"><div class="v" id="k-up">0</div><div class="l">remontent</div></div>
+      <div class="kpi"><div class="v" id="k-dn">0</div><div class="l">descendent</div></div>
+    </div>
+
+    <div class="card">
+      <div class="col-h"><h3>Grille de notation</h3><span class="eyebrow">score / 100</span></div>
+      <div id="crits"></div>
+      <div class="rules"><b>Règles dures :</b> brouillon → hors ligne · rupture → tout en bas. <b>Wathe vs dropshipping :</b> ton stock boutique est privilégié, mais une paire Wathe à une seule taille perd sa priorité.</div>
+      <div class="gridfoot"><span class="eyebrow">Total : <span class="mono" id="wtot">100</span> pts</span><button class="reset" id="wreset">Réinitialiser la grille</button></div>
+    </div>
+
+    <div class="compare">
+      <div><div class="col-h"><h3>Ordre actuel</h3><span class="tag">sur Shopify</span></div><div class="list before" id="before"></div></div>
+      <div><div class="col-h"><h3>Après notation</h3><span class="tag">glisse pour ajuster</span><button class="reset" id="mreset" hidden>Rétablir l'ordre calculé</button></div><div class="list after" id="after"></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="v-all" hidden>
+  <div class="card"><div class="col-h"><h3>Toutes les collections</h3><span class="eyebrow" id="ccount"></span></div>
+  <div class="msg">Applique la grille (poids ci-dessus) à plusieurs collections d'un coup. Chaque collection prend 10-40 s.</div>
+  <div style="display:flex;align-items:center;gap:12px;margin:12px 0;flex-wrap:wrap"><button class="reset" id="selall">Tout sélectionner</button><span class="stat"><span id="seln">0</span> sélectionnée(s)</span><button class="btn" id="sendsel" disabled style="margin-left:auto">Renvoyer la sélection →</button></div>
+  <div id="colrows"></div></div>
+</section>
+</div>
+
+<div class="bar" id="bar-one"><div class="in"><span class="stat" id="barstat"></span><span style="display:flex;gap:10px"><button class="btn ghost" id="revert">Revert</button><button class="btn" id="apply" disabled>Renvoyer vers Shopify</button></span></div></div>
+
+<script>
 const API="https://tqznrfjbgnwoatohkyxt.supabase.co/functions/v1/merch-pilote";
-const $=s=>document.querySelector(s);let KEY=localStorage.getItem("mp_key")||"";let cur=null,order=null;
-if(KEY)$("#key").value=KEY;
+const $=s=>document.querySelector(s);
+let KEY=localStorage.getItem("mp_key")||""; if(KEY)$("#key").value=KEY;
 $("#key").onchange=e=>{KEY=e.target.value.trim();localStorage.setItem("mp_key",KEY);loadColls();};
+
 async function api(action,params={},opt={}){
   const u=new URL(API);u.searchParams.set("action",action);
   for(const k in params)u.searchParams.set(k,params[k]);
   const r=await fetch(u,{...opt,headers:{"x-merch-key":KEY,"content-type":"application/json",...(opt.headers||{})}});
-  const j=await r.json();if(!r.ok)throw new Error(j.error||r.status);return j;}
-async function loadColls(){if(!KEY)return;$("#st").textContent="Chargement des collections…";try{const d=await api("collections");
+  const j=await r.json();if(!r.ok)throw new Error(j.error||("HTTP "+r.status));return j;
+}
+
+// ---- grille ----
+const DEF={sales:30,wathe:25,size:20,stock:15,newness:10};
+const CRITS=[
+ {k:"sales",nm:"Ventes récentes (60 j)",scale:"6+=max · 3-5=¾ · 1-2=½ · 0=0",on:true},
+ {k:"wathe",nm:"Priorité Wathe (boutique)",scale:"Vichy — 4+ tailles=max · 2-3=⅗ · 1 ou 0=0",on:true},
+ {k:"size",nm:"Disponibilité des tailles",scale:"8+=max · 5-7=⅔ · 2-4=⅓ · 1=0",on:true},
+ {k:"stock",nm:"Profondeur de stock",scale:"20+=max · 6-19=⅔ · 2-5=⅓ · 1=0",on:true},
+ {k:"newness",nm:"Nouveauté (sortie récente)",scale:"<2 sem=max · 2-4 sem=⅗ · +4 sem=0",on:true},
+ {k:"conv",nm:"Taux de conversion",scale:"données sessions à brancher",on:false},
+];
+let W={...DEF};
+const C=$("#crits");
+CRITS.forEach(c=>{const d=document.createElement("div");d.className="crit"+(c.on?"":" off");
+ d.innerHTML='<div class="nm">'+c.nm+(c.on?"":'<span class="badge">à brancher</span>')+'</div><div class="slwrap"><input type="range" min="0" max="40" value="'+(W[c.k]||0)+'" '+(c.on?"":"disabled")+' data-k="'+c.k+'"><div class="scale">'+c.scale+'</div></div><div class="w" id="w-'+c.k+'">'+(W[c.k]||0)+'</div>';
+ C.appendChild(d);});
+C.addEventListener("input",e=>{const k=e.target.dataset.k;if(!k)return;W[k]=+e.target.value;$("#w-"+k).textContent=W[k];$("#wtot").textContent=W.sales+W.wathe+W.size+W.stock+W.newness;render();});
+$("#wreset").onclick=()=>{W={...DEF};CRITS.forEach(c=>{const i=C.querySelector('input[data-k="'+c.k+'"]');if(i)i.value=W[c.k]||0;$("#w-"+c.k).textContent=W[c.k]||0;});$("#wtot").textContent=100;render();};
+
+function lvl(k,it){
+ if(k==="sales")return it.o>=6?1:it.o>=3?.75:it.o>=1?.5:0;
+ if(k==="wathe")return it.b>=4?1:it.b>=2?.6:0;
+ if(k==="size")return it.z>=8?1:it.z>=5?.67:it.z>=2?.33:0;
+ if(k==="stock")return it.s>=20?1:it.s>=6?.67:it.s>=2?.33:0;
+ if(k==="newness")return it.wk<2?1:it.wk<4?.6:0;
+ return 0;}
+const score=it=>Math.round(lvl("sales",it)*W.sales+lvl("wathe",it)*W.wathe+lvl("size",it)*W.size+lvl("stock",it)*W.stock+lvl("newness",it)*W.newness);
+
+// ---- état collection ----
+let cur=null, ITEMS=[], BEFORE=[], manual=null;
+function tags(it){const t=[];t.push(it.drop?'<span class="ds">Dropship</span>':'<span class="vichy">Vichy·'+it.b+'T</span>');
+ if(it.o>0)t.push('<span class="hot">'+it.o+' vente'+(it.o>1?"s":"")+'/60j</span>');
+ if(it.wk<4)t.push('<span class="new">🆕 '+Math.round(it.wk*7)+' j</span>');
+ t.push(it.s+' stock');t.push(it.z+' tailles');return t.join(' · ');}
+function rowEl(it,rk,mv,maxSc,top,drag){const el=document.createElement("div");el.className="rowi"+(top?" top":"");el.dataset.id=it.id;if(drag)el.draggable=true;
+ let m="";if(mv!==null){const c=mv>0?"u":mv<0?"d":"z";m='<span class="mv '+c+'">'+(mv>0?"▲"+mv:mv<0?"▼"+(-mv):"—")+'</span>';}
+ el.innerHTML='<span class="rk">'+rk+'</span><div class="mid"><div class="nmt">'+it.title+'</div><div class="meta">'+tags(it)+'</div><div class="scorebar"><i style="width:'+Math.round(it.sc/maxSc*100)+'%"></i></div></div><div class="right"><span class="score">'+it.sc+'</span>'+m+'</div>';
+ return el;}
+function render(){
+ if(!ITEMS.length)return;
+ ITEMS.forEach(it=>it.sc=score(it));
+ const maxSc=Math.max(1,...ITEMS.map(it=>it.sc));
+ const byId=Object.fromEntries(ITEMS.map(it=>[it.id,it]));
+ let after;
+ if(manual){after=manual.map(id=>byId[id]).filter(Boolean);ITEMS.forEach(it=>{if(!manual.includes(it.id))after.push(it);});}
+ else after=[...ITEMS].sort((a,b)=>b.sc-a.sc||b.b-a.b||b.s-a.s||a.title.localeCompare(b.title));
+ const bpos={};BEFORE.forEach((id,i)=>bpos[id]=i);
+ let up=0,dn=0;after.forEach((it,i)=>{const d=(bpos[it.id]??i)-i;if(d>0)up++;else if(d<0)dn++;});
+ $("#k-up").textContent=up;$("#k-dn").textContent=dn;
+ const B=$("#before");B.innerHTML="";BEFORE.forEach((id,i)=>{if(byId[id])B.appendChild(rowEl(byId[id],i+1,null,maxSc,false,false));});
+ const A=$("#after");A.innerHTML="";after.forEach((it,i)=>A.appendChild(rowEl(it,i+1,(bpos[it.id]??i)-i,maxSc,i<6,true)));
+ $("#mreset").hidden=!manual;
+}
+function afterOrder(){return [...$("#after").querySelectorAll(".rowi")].map(n=>n.dataset.id);}
+
+// drag
+const AL=$("#after");
+AL.addEventListener("dragstart",e=>{const r=e.target.closest(".rowi");if(r)r.classList.add("dragging");});
+AL.addEventListener("dragend",e=>{const r=e.target.closest(".rowi");if(r)r.classList.remove("dragging");manual=afterOrder();render();});
+AL.addEventListener("dragover",e=>{e.preventDefault();const dg=AL.querySelector(".dragging");if(!dg)return;
+ const els=[...AL.querySelectorAll(".rowi:not(.dragging)")];let ref=null,best=-Infinity;
+ for(const c of els){const b=c.getBoundingClientRect();const off=e.clientY-b.top-b.height/2;if(off<0&&off>best){best=off;ref=c;}}
+ if(ref==null)AL.appendChild(dg);else AL.insertBefore(dg,ref);});
+$("#mreset").onclick=()=>{manual=null;render();};
+
+// ---- actions collection ----
+async function loadColls(){if(!KEY)return;$("#st").textContent="Chargement des collections…";
+ try{const d=await api("collections");window.COLS=d.collections;
   const s=$("#coll");s.innerHTML="";d.collections.forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent=c.title+" ("+c.count+")";s.appendChild(o);});
-  $("#st").textContent=d.collections.length+" collections chargées.";}catch(e){$("#st").innerHTML='<span class=err>'+e.message+'</span>';}}
-$("#go").onclick=async()=>{cur=$("#coll").value;if(!cur){return;}$("#st").textContent="Calcul en cours… (lecture stock + ventes, ça peut prendre 10-30 s)";
-  try{const d=await api("compute",{id:cur});order=d.items.map(i=>i.id);
-    $("#kpis").textContent=d.online+" en ligne · "+d.vichy+" Vichy · "+(d.totalProducts-d.online)+" masqués";
-    $("#list").innerHTML=d.items.map((it,i)=>'<div class=row><span class=rk>'+(i+1)+'</span><div><div class=nm>'+it.title+'</div><div class=meta>'+(it.drop?'<span class=ds>Dropship</span>':'<span class=vichy>Vichy·'+it.b+'T</span>')+' · '+(it.o?it.o+' vente/60j · ':'')+it.s+' stock · '+it.z+' tailles</div></div><span class=sc>'+it.sc+'</span></div>').join("");
-    $("#result").style.display="block";$("#apply").disabled=false;$("#barstat").textContent=d.online+" paires prêtes";$("#st").textContent="";}
-  catch(e){$("#st").innerHTML='<span class=err>'+e.message+'</span>';}};
-$("#apply").onclick=async()=>{if(!confirm("Appliquer ce nouvel ordre à la collection ? (réversible)"))return;$("#barstat").textContent="Application…";
-  try{const d=await api("apply",{},{method:"POST",body:JSON.stringify({id:cur,order})});$("#barstat").textContent="✓ "+d.moved+" paires réordonnées";}
-  catch(e){$("#barstat").innerHTML='<span class=err>'+e.message+'</span>';}};
+  $("#st").textContent=d.collections.length+" collections.";buildBatch();}catch(e){$("#st").innerHTML='<span class=err>'+e.message+'</span>';}}
+$("#go").onclick=async()=>{cur=$("#coll").value;if(!cur)return;$("#st").textContent="Calcul en cours… (stock + ventes, 10-40 s)";$("#res").hidden=true;
+ try{const d=await api("compute",{id:cur});ITEMS=d.items;manual=null;
+  const onl=new Set(ITEMS.map(i=>i.id));BEFORE=d.currentOrder.filter(id=>onl.has(id));
+  $("#k-on").textContent=d.online;$("#k-vi").textContent=d.vichy;
+  render();$("#res").hidden=false;$("#apply").disabled=false;$("#barstat").textContent=d.online+" paires · "+(d.totalProducts-d.online)+" masquées";$("#st").textContent="";}
+ catch(e){$("#st").innerHTML='<span class=err>'+e.message+'</span>';}};
+$("#apply").onclick=async()=>{if(!cur||!confirm("Appliquer ce nouvel ordre à la collection ? (réversible)"))return;$("#barstat").textContent="Application…";
+ try{const d=await api("apply",{},{method:"POST",body:JSON.stringify({id:cur,order:afterOrder()})});$("#barstat").textContent="✓ "+d.moved+" paires réordonnées";}
+ catch(e){$("#barstat").innerHTML='<span class=err>'+e.message+'</span>';}};
 $("#revert").onclick=async()=>{if(!cur||!confirm("Restaurer l'ordre d'origine ?"))return;$("#barstat").textContent="Restauration…";
-  try{const d=await api("revert",{},{method:"POST",body:JSON.stringify({id:cur})});$("#barstat").textContent="✓ ordre d'origine restauré ("+d.restored+")";}
-  catch(e){$("#barstat").innerHTML='<span class=err>'+e.message+'</span>';}};
+ try{const d=await api("revert",{},{method:"POST",body:JSON.stringify({id:cur})});$("#barstat").textContent="✓ ordre d'origine restauré ("+d.restored+")";}
+ catch(e){$("#barstat").innerHTML='<span class=err>'+e.message+'</span>';}};
+
+// ---- navigation ----
+const views={one:$("#v-one"),all:$("#v-all")};
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{
+ for(const k in views)views[k].hidden=(k!==b.dataset.v);
+ $("#bar-one").style.display=(b.dataset.v==="one")?"":"none";
+ document.querySelectorAll(".nav button").forEach(x=>x.setAttribute("aria-selected",x===b));});
+$("#bar-one").style.display="";
+
+// ---- batch ----
+function weightsParam(){return {w_sales:W.sales,w_wathe:W.wathe,w_size:W.size,w_stock:W.stock,w_news:W.newness};}
+function buildBatch(){const host=$("#colrows");if(!window.COLS)return;$("#ccount").textContent=window.COLS.length+" collections";
+ host.innerHTML="";
+ window.COLS.forEach(c=>{const row=document.createElement("div");row.className="colrow";row.dataset.id=c.id;
+  row.innerHTML='<input type="checkbox"><div class="main"><div style="font-weight:600;font-size:14px">'+c.title+'</div><div class="cm">'+c.count+' produits · tri '+c.sortOrder.toLowerCase()+'</div></div><span class="st2" data-st></span><button class="mini">Renvoyer</button>';
+  host.appendChild(row);});
+ host.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.onchange=updSel);
+ host.querySelectorAll('.mini').forEach(btn=>btn.onclick=e=>{const row=e.target.closest(".colrow");runOne(row);});
+ updSel();}
+function updSel(){const n=document.querySelectorAll('#colrows input:checked').length;$("#seln").textContent=n;$("#sendsel").disabled=!n;}
+$("#selall").onclick=()=>{document.querySelectorAll('#colrows input').forEach(c=>c.checked=true);updSel();};
+async function runOne(row){const id=row.dataset.id;const st=row.querySelector("[data-st]");const btn=row.querySelector(".mini");
+ btn.disabled=true;st.textContent="…";st.style.background="var(--surface2)";st.style.color="var(--muted)";
+ try{const d=await api("autoapply",{},{method:"POST",body:JSON.stringify({id,weights:weightsParam()})});
+  st.textContent="✓ "+d.moved;st.style.background="var(--up)";st.style.color="#fff";}
+ catch(e){st.textContent="erreur";st.style.background="#c0392b";st.style.color="#fff";}
+ btn.disabled=false;}
+$("#sendsel").onclick=async()=>{const rows=[...document.querySelectorAll('#colrows .colrow')].filter(r=>r.querySelector('input').checked);
+ if(!rows.length||!confirm("Appliquer la grille à "+rows.length+" collection(s) ? (réversible par collection)"))return;
+ $("#sendsel").disabled=true;for(const r of rows){await runOne(r);}$("#sendsel").disabled=false;};
+
 if(KEY)loadColls();
 </script></body></html>
