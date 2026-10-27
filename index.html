@@ -1,0 +1,57 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Merch Pilote</title><style>
+:root{--bg:#eef0f3;--surface:#fff;--surface2:#f6f7f9;--ink:#15181e;--muted:#5c6470;--line:#e2e5ea;--accent:#f0481d;--up:#1a8f52;--hid:#b06a12;--mono:ui-monospace,Menlo,monospace}
+@media(prefers-color-scheme:dark){:root{--bg:#121419;--surface:#1b1e25;--surface2:#22262f;--ink:#eceef1;--muted:#9aa3b0;--line:#2b2f39;--accent:#ff5b34;--up:#44c17f;--hid:#d99b3f}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:24px 16px 120px}
+h1{font-size:24px;margin:0 0 2px}.sub{color:var(--muted);margin-bottom:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+select,input{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 12px;width:100%;font:inherit}
+label{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;display:block;margin-bottom:6px}
+.row{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-bottom:6px}
+.rk{font-family:var(--mono);color:var(--muted);text-align:center;font-size:13px}
+.nm{font-size:13px;font-weight:600}.meta{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:2px}
+.sc{font-family:var(--mono);font-weight:600}
+.vichy{color:var(--up);font-weight:700}.ds{color:var(--hid);font-weight:600}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:11px;padding:12px 20px;font-weight:700;cursor:pointer;font:inherit}
+.btn.ghost{background:none;color:var(--muted);border:1px solid var(--line)}
+.btn:disabled{opacity:.5;cursor:default}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:14px 16px;display:flex;gap:10px;justify-content:space-between;align-items:center}
+.stat{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.msg{font-size:13px;color:var(--muted);margin-top:10px}.err{color:#c0392b}
+</style></head><body><div class="wrap">
+<h1>Merch Pilote</h1><div class="sub">Réordonne tes collections Shopify selon la grille de notation.</div>
+<div class="card"><label>Clé d'accès</label><input id="key" type="password" placeholder="colle ta clé ici"><div class="msg">Stockée uniquement dans ce navigateur.</div></div>
+<div class="card"><label>Collection</label><select id="coll"><option>— entre ta clé pour charger —</option></select>
+<div style="margin-top:10px"><button class="btn" id="go">Calculer l'ordre</button></div><div class="msg" id="st"></div></div>
+<div id="result" style="display:none"><div class="card"><div class="stat" id="kpis"></div></div>
+<div class="card"><div id="list"></div></div></div>
+<div class="bar"><span class="stat" id="barstat"></span><span style="display:flex;gap:10px">
+<button class="btn ghost" id="revert">Revert</button><button class="btn" id="apply" disabled>Renvoyer vers Shopify</button></span></div>
+</div><script>
+const API="https://tqznrfjbgnwoatohkyxt.supabase.co/functions/v1/merch-pilote";
+const $=s=>document.querySelector(s);let KEY=localStorage.getItem("mp_key")||"";let cur=null,order=null;
+if(KEY)$("#key").value=KEY;
+$("#key").onchange=e=>{KEY=e.target.value.trim();localStorage.setItem("mp_key",KEY);loadColls();};
+async function api(action,params={},opt={}){
+  const u=new URL(API);u.searchParams.set("action",action);
+  for(const k in params)u.searchParams.set(k,params[k]);
+  const r=await fetch(u,{...opt,headers:{"x-merch-key":KEY,"content-type":"application/json",...(opt.headers||{})}});
+  const j=await r.json();if(!r.ok)throw new Error(j.error||r.status);return j;}
+async function loadColls(){if(!KEY)return;$("#st").textContent="Chargement des collections…";try{const d=await api("collections");
+  const s=$("#coll");s.innerHTML="";d.collections.forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent=c.title+" ("+c.count+")";s.appendChild(o);});
+  $("#st").textContent=d.collections.length+" collections chargées.";}catch(e){$("#st").innerHTML='<span class=err>'+e.message+'</span>';}}
+$("#go").onclick=async()=>{cur=$("#coll").value;if(!cur){return;}$("#st").textContent="Calcul en cours… (lecture stock + ventes, ça peut prendre 10-30 s)";
+  try{const d=await api("compute",{id:cur});order=d.items.map(i=>i.id);
+    $("#kpis").textContent=d.online+" en ligne · "+d.vichy+" Vichy · "+(d.totalProducts-d.online)+" masqués";
+    $("#list").innerHTML=d.items.map((it,i)=>'<div class=row><span class=rk>'+(i+1)+'</span><div><div class=nm>'+it.title+'</div><div class=meta>'+(it.drop?'<span class=ds>Dropship</span>':'<span class=vichy>Vichy·'+it.b+'T</span>')+' · '+(it.o?it.o+' vente/60j · ':'')+it.s+' stock · '+it.z+' tailles</div></div><span class=sc>'+it.sc+'</span></div>').join("");
+    $("#result").style.display="block";$("#apply").disabled=false;$("#barstat").textContent=d.online+" paires prêtes";$("#st").textContent="";}
+  catch(e){$("#st").innerHTML='<span class=err>'+e.message+'</span>';}};
+$("#apply").onclick=async()=>{if(!confirm("Appliquer ce nouvel ordre à la collection ? (réversible)"))return;$("#barstat").textContent="Application…";
+  try{const d=await api("apply",{},{method:"POST",body:JSON.stringify({id:cur,order})});$("#barstat").textContent="✓ "+d.moved+" paires réordonnées";}
+  catch(e){$("#barstat").innerHTML='<span class=err>'+e.message+'</span>';}};
+$("#revert").onclick=async()=>{if(!cur||!confirm("Restaurer l'ordre d'origine ?"))return;$("#barstat").textContent="Restauration…";
+  try{const d=await api("revert",{},{method:"POST",body:JSON.stringify({id:cur})});$("#barstat").textContent="✓ ordre d'origine restauré ("+d.restored+")";}
+  catch(e){$("#barstat").innerHTML='<span class=err>'+e.message+'</span>';}};
+if(KEY)loadColls();
+</script></body></html>
